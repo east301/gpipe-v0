@@ -1,0 +1,43 @@
+#!/bin/zsh
+#$ -S /bin/zsh
+#$ -N {{ script_name }}
+#$ -j y
+#$ -o {{ log_directory_path }}
+#$ -wd {{ work_directory_path }}
+#$ -t 1-{{ sub_script_paths|length }}{% if cpus > 1 %}
+#$ -pe def_slot {{ cpus }}{% endif %}
+#$ -l s_vmem={{ memory|GB }}G,mem_req={{ memory|GB }}G{% for r in hard_resources %}
+#$ -l {{ r }}{% endfor %}{% for r in soft_resources %}
+#$ -soft -l {{ r }}{% endfor %}{% for j in dependency_task_names %}
+#$ -hold_jid {{ j }}{% endfor %}
+
+# ================================================================================
+# error handling & logging
+# ================================================================================
+
+set -eux
+trap 'exit 100' ERR INT TERM SIGXCPU
+
+if [ "$(basename $0)" = "{{ script_name }}" ]; then
+  exec > >(tee -a {{ script_path }}.oMANUAL) 2>&1
+fi
+
+# ================================================================================
+# script
+# ================================================================================
+
+p={{ sub_script_paths[0]|dirname }}
+scripts=(\{% for s in sub_script_paths %}
+    [{{ loop.index  }}]=$p/{{ s|basename }}\{% endfor %}
+)
+
+if [ "${SGE_TASK_ID:-x}" != "x" ]; then
+    script=${scripts[$SGE_TASK_ID]}
+    $SHELL $script 2>&1 | tee -a $script.x${JOB_ID}
+else
+    for script in ${scripts[@]}; do
+        echo "# ==========> [$(date +'%Y-%m-%d %H:%M:%S')] $script <==========" 2>&1
+        $SHELL $script 2>&1
+        echo
+    done
+fi

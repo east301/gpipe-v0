@@ -1,0 +1,119 @@
+#!/bin/zsh
+#$ -S /bin/zsh
+#$ -N {{ script_name }}
+#$ -j y
+#$ -o {{ log_directory_path }}
+#$ -wd {{ work_directory_path }}{% if cpus > 1 %}
+#$ -pe def_slot {{ cpus }}{% endif %}
+#$ -l s_vmem={{ memory|GB }}G,mem_req={{ memory|GB }}G{% for r in hard_resources %}
+#$ -l {{ r }}{% endfor %}{% for r in soft_resources %}
+#$ -soft -l {{ r }}{% endfor %}{% for j in dependency_task_names %}
+#$ -hold_jid {{ j }}{% endfor %}
+
+# ================================================================================
+# meta
+# ================================================================================
+
+gpipe_meta_script_path={{ script_path }}
+gpipe_meta_script_name={{ script_name }}
+
+gpipe_meta_module_path={{ module_file_directory_path }}
+gpipe_meta_modules=(\{% for m in modules %}
+    {{ m }}\{% endfor %}
+)
+
+gpipe_meta_work_directory={{ work_directory_path }}
+gpipe_meta_temporary_directory={% if use_temporary_directory %}{{ temporary_directory_path }}{% endif %}
+gpipe_meta_inputs=(\{% for _, i in inputs %}
+    {{ i }}\{% endfor %}
+)
+gpipe_meta_outputs=(\{% for _, o in outputs %}
+    {{ o }}\{% endfor %}
+)
+
+# ================================================================================
+# error handling & logging
+# ================================================================================
+
+_on_error() {
+    if [ -e $gpipe_meta_work_directory ]; then
+        cd $gpipe_meta_work_directory
+        for o in "${gpipe_meta_outputs[@]}"; do
+            rm -rf $o || true
+        done
+    fi
+
+    cd $gpipe_meta_work_directory
+    if [ "x${gpipe_meta_temporary_directory}" != "x" -a -d "$gpipe_meta_temporary_directory" ]; then
+        rm -rf $gpipe_meta_temporary_directory
+    fi
+
+    exit 100
+}
+
+set -eux
+trap _on_error ERR INT TERM SIGXCPU
+
+if [ "$(basename $0)" = "$gpipe_meta_script_name" ]; then
+  exec > >(tee -a ${gpipe_meta_script_path}.oMANUAL) 2>&1
+fi
+
+# ================================================================================
+# environment
+# ================================================================================
+
+export LC_ALL=C
+
+# loads modules
+export MODULEPATH=$gpipe_meta_module_path
+for m in "${gpipe_meta_modules[@]}"; do
+    module load $m
+    module list --terse 2>&1 | fgrep $m >/dev/null || exit 100
+done
+
+# shows envrironment
+date              | awk '{ print "# gr :: date    # " $0 }' >&2
+hostname          | awk '{ print "# gr :: host    # " $0 }' >&2
+module list 2>&1  | awk '{ print "# gr :: modules # " $0 }' >&2
+ulimit -a         | awk '{ print "# gr :: ulimit  # " $0 }' >&2
+env | sort        | awk '{ print "# gr :: env     # " $0 }' >&2
+
+# ================================================================================
+# before:script
+# ================================================================================
+
+cd $gpipe_meta_work_directory
+
+# creates temporary directory
+if [ "x${gpipe_meta_temporary_directory}" != "x" ]; then
+    mkdir -p $gpipe_meta_temporary_directory
+    export TMPDIR=$gpipe_meta_temporary_directory
+    export JAVA_TOOL_OPTIONS="${JAVA_TOOL_OPTIONS:-} -Djava.io.tmpdir=$gpipe_meta_temporary_directory"
+fi
+
+# checks existence of input files
+for i in "${gpipe_meta_inputs[@]}"; do
+    test -e $i
+done
+
+# ================================================================================
+# script
+# ================================================================================
+
+{{ script }}
+
+# ================================================================================
+# after:script
+# ================================================================================
+
+cd $gpipe_meta_work_directory
+
+# checks existence of output files
+for o in "${gpipe_meta_outputs[@]}"; do
+    test -e $o
+done
+
+# deletes temporary directory
+if [ "x${gpipe_meta_temporary_directory}" != "x" ]; then
+    rm -rf $gpipe_meta_temporary_directory
+fi
