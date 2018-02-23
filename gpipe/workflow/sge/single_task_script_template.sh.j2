@@ -44,11 +44,10 @@ _on_error() {
         for o in "${gpipe_meta_outputs[@]}"; do
             rm -rf $o || true
         done
-    fi
 
-    cd $gpipe_meta_work_directory
-    if [ "x${gpipe_meta_temporary_directory}" != "x" -a -d "$gpipe_meta_temporary_directory" ]; then
-        rm -rf $gpipe_meta_temporary_directory
+        if [ "x${gpipe_meta_temporary_directory}" != "x" -a -d "$gpipe_meta_temporary_directory" ]; then
+            rm -rf $gpipe_meta_temporary_directory
+        fi
     fi
 
     exit 100
