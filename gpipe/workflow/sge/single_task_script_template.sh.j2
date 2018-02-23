@@ -1,5 +1,5 @@
-#!/bin/zsh
-#$ -S /bin/zsh
+#!/bin/bash
+#$ -S /bin/bash
 #$ -N {{ script_name }}
 #$ -j y
 #$ -o {{ log_directory_path }}
@@ -18,15 +18,18 @@ gpipe_meta_script_path={{ script_path }}
 gpipe_meta_script_name={{ script_name }}
 
 gpipe_meta_module_path={{ module_file_directory_path }}
+gpipe_meta_num_modules={{ modules|length }}
 gpipe_meta_modules=(\{% for m in modules %}
     {{ m }}\{% endfor %}
 )
 
 gpipe_meta_work_directory={{ work_directory_path }}
 gpipe_meta_temporary_directory={% if use_temporary_directory %}{{ temporary_directory_path }}{% endif %}
+gpipe_meta_num_inputs={{ inputs|length }}
 gpipe_meta_inputs=(\{% for _, i in inputs %}
     {{ i }}\{% endfor %}
 )
+gpipe_meta_num_outputs={{ outputs|length }}
 gpipe_meta_outputs=(\{% for _, o in outputs %}
     {{ o }}\{% endfor %}
 )
@@ -41,11 +44,10 @@ _on_error() {
         for o in "${gpipe_meta_outputs[@]}"; do
             rm -rf $o || true
         done
-    fi
 
-    cd $gpipe_meta_work_directory
-    if [ "x${gpipe_meta_temporary_directory}" != "x" -a -d "$gpipe_meta_temporary_directory" ]; then
-        rm -rf $gpipe_meta_temporary_directory
+        if [ "x${gpipe_meta_temporary_directory}" != "x" -a -d "$gpipe_meta_temporary_directory" ]; then
+            rm -rf $gpipe_meta_temporary_directory
+        fi
     fi
 
     exit 100
@@ -66,10 +68,12 @@ export LC_ALL=C
 
 # loads modules
 export MODULEPATH=$gpipe_meta_module_path
-for m in "${gpipe_meta_modules[@]}"; do
-    module load $m
-    module list --terse 2>&1 | fgrep $m >/dev/null || exit 100
-done
+if [ $gpipe_meta_num_modules -ge 1 ]; then
+    for m in "${gpipe_meta_modules[@]}"; do
+        module load $m
+        module list --terse 2>&1 | fgrep $m >/dev/null || exit 100
+    done
+fi
 
 # shows envrironment
 date              | awk '{ print "# gr :: date    # " $0 }' >&2
@@ -92,9 +96,11 @@ if [ "x${gpipe_meta_temporary_directory}" != "x" ]; then
 fi
 
 # checks existence of input files
-for i in "${gpipe_meta_inputs[@]}"; do
-    test -e $i
-done
+if [ $gpipe_meta_num_inputs -ge 1 ]; then
+    for i in "${gpipe_meta_inputs[@]}"; do
+        test -e $i
+    done
+fi
 
 # ================================================================================
 # script
@@ -109,9 +115,11 @@ done
 cd $gpipe_meta_work_directory
 
 # checks existence of output files
-for o in "${gpipe_meta_outputs[@]}"; do
-    test -e $o
-done
+if [ $gpipe_meta_num_outputs -ge 1 ]; then
+    for o in "${gpipe_meta_outputs[@]}"; do
+        test -e $o
+    done
+fi
 
 # deletes temporary directory
 if [ "x${gpipe_meta_temporary_directory}" != "x" ]; then
