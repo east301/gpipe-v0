@@ -38,23 +38,26 @@ gpipe_meta_outputs=(\{% for _, o in outputs %}
 # error handling & logging
 # ================================================================================
 
-_on_error() {
-    if [ -e $gpipe_meta_work_directory ]; then
-        cd $gpipe_meta_work_directory
-        for o in "${gpipe_meta_outputs[@]}"; do
-            rm -rf $o || true
-        done
+_on_exit() {
+    if [ $? -ne 0 ]; then
+        if [ -e $gpipe_meta_work_directory ]; then
+            cd $gpipe_meta_work_directory
+            for o in "${gpipe_meta_outputs[@]}"; do
+                rm -rf $o || true
+            done
 
-        if [ "x${gpipe_meta_temporary_directory}" != "x" -a -d "$gpipe_meta_temporary_directory" ]; then
-            rm -rf $gpipe_meta_temporary_directory
+            if [ "x${gpipe_meta_temporary_directory}" != "x" -a -d "$gpipe_meta_temporary_directory" ]; then
+                rm -rf $gpipe_meta_temporary_directory
+            fi
         fi
-    fi
 
-    exit 100
+        exit 100
+    fi
 }
 
 set -eux
-trap _on_error ERR INT TERM SIGXCPU
+trap '_on_exit' EXIT
+trap 'exit 100' ERR INT TERM SIGXCPU
 
 if [ "$(basename $0)" = "$gpipe_meta_script_name" ]; then
   exec > >(tee -a ${gpipe_meta_script_path}.oMANUAL) 2>&1
