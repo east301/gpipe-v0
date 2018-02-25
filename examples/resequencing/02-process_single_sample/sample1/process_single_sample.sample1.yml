@@ -1,0 +1,24 @@
+#
+# copyright (c) 2018 east301
+#
+# This software is released under the MIT License.
+# http://opensource.org/licenses/mit-license.php
+#
+# ==========
+# process_single_sample.sample1.yml
+#
+
+gpipe:
+  task_name_prefix: gpipe-example-process_single_sample-sample1-
+  work_directory: .
+
+process_single_sample:
+  reference:
+    fasta: ../../01-prepare_reference/saccer3/saccer3.fa
+
+  sample:
+    id: sample1
+    fastqs:
+      - id: FOO
+        r1:
+        r2:
