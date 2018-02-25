@@ -1,3 +1,4 @@
+# flake8: NOQA
 #
 # copyright (c) 2018 east301
 #
@@ -8,7 +9,7 @@
 # process_single_sample.workflow.py
 #
 
-from gpipe.dsl import *     # NOQA
+from gpipe.dsl import *
 
 
 # ================================================================================
