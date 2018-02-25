@@ -13,7 +13,7 @@ from setuptools import setup
 
 setup(
     name='gpipe',
-    version='0.0.3.dev',
+    use_scm_version=True,
     license='MIT',
 
     description='GridPipe',
