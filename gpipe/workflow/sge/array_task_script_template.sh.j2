@@ -33,11 +33,11 @@ scripts=(\{% for s in sub_script_paths %}
 
 if [ "${SGE_TASK_ID:-x}" != "x" ]; then
     script=${scripts[$SGE_TASK_ID]}
-    $SHELL $script 2>&1 | tee -a $script.x${JOB_ID}
+    exec /bin/bash -eux $script
 else
     for script in ${scripts[@]}; do
         echo "# ==========> [$(date +'%Y-%m-%d %H:%M:%S')] $script <==========" 2>&1
-        $SHELL $script 2>&1
+        /bin/bash -eux $script 2>&1
         echo
     done
 fi
