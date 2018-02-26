@@ -1,0 +1,16 @@
+#
+# copyright (c) 2018 east301
+#
+# This software is released under the MIT License.
+# http://opensource.org/licenses/mit-license.php
+#
+# ==========
+# prepare_reference.saccer3.yml
+#
+
+gpipe:
+  task_name_prefix: gpipe-example-prepare_reference-saccer3-
+  work_directory: .
+
+prepare_reference:
+  fasta: saccer3.fa

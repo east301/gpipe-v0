@@ -65,3 +65,12 @@ var/
 .coverage
 pip-delete-this-directory.txt
 pip-log.txt
+
+
+# ================================================================================
+# Project
+# ================================================================================
+
+examples/resequencing/01-prepare_reference/saccer3/*
+!examples/resequencing/01-prepare_reference/saccer3/prepare_reference.saccer3.yml
+!examples/resequencing/01-prepare_reference/saccer3/run.sh
