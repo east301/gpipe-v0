@@ -28,3 +28,11 @@ def join_path(*args):
 
 def get_absolute_path(path):
     return os.path.abspath(path) if path else None
+
+
+def resolve_relative_path(path):
+    return os.readlink(path) if os.path.islink(path) else path
+
+
+def resolve_absolute_path(path):
+    return os.path.abspath(resolve_relative_path(path))
