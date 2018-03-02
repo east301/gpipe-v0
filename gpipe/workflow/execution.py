@@ -138,6 +138,11 @@ class AbstractScriptFileBasedWorkflowExecutor(WorkflowExecutor):
             'script_name': os.path.basename(script_path),
             'dependency_task_names': dependency_task_names,
 
+            'workflow': self.workflow.options.gpipe.workflow,
+            'workflow_directory': self.workflow.options.gpipe.workflow_directory,
+            'workflow_options': self.workflow.options.gpipe.workflow_options,
+            'workflow_options_directory': self.workflow.options.gpipe.workflow_options_directory,
+
             'module_file_directory_path': self.workflow.module_file_directory_path,
 
             'work_directory_path': self.workflow.work_directory_path,
