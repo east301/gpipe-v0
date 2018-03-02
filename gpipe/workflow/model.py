@@ -168,6 +168,10 @@ class Task(object):
         #
         context = {
             'options': convert_ns_to_dict(options),
+            'workflow': options.gpipe.workflow,
+            'workflow_directory': options.gpipe.workflow_directory,
+            'workflow_options': options.gpipe.workflow_options,
+            'workflow_options_directory': options.gpipe.workflow_options_directory,
             'modules': self.modules,
             'cpus': self.cpus,
             'memory': self.memory,
