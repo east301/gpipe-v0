@@ -121,6 +121,7 @@ cd $gpipe_meta_work_directory
 if [ $gpipe_meta_num_outputs -ge 1 ]; then
     for o in "${gpipe_meta_outputs[@]}"; do
         test -e $o
+        chmod ugo-w $o
     done
 fi
 
