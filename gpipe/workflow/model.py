@@ -28,7 +28,7 @@ from ..utils.config import load_yaml_from_file
 from ..utils.container import Stack, merge_dicts
 from ..utils.log import get_logger
 from ..utils.module import import_file, pyco_suppressed
-from ..utils.path import CachedFileSystemMetaResolver, join_path
+from ..utils.path import CachedFileSystemMetaResolver, get_absolute_path, join_path, resolve_absolute_path
 from ..utils.pyobject import ObjectProxy, convert_dict_to_ns, convert_ns_to_dict
 from ..utils.template import render_template_string, undent
 from .execution import generate_execution_id
@@ -604,7 +604,7 @@ def load_workflow(global_options, workflow_path, workflow_options_path, executio
         logger.info('    => execution count:      %(count)s', {'count': execution_count or '(null)'})
 
     #
-    workflow_options = _load_workflow_options(global_options, workflow_options_path)
+    workflow_options = _load_workflow_options(workflow_path, workflow_options_path, global_options)
     execution_count = _get_execution_count(execution_count, workflow_options)
 
     #
@@ -614,8 +614,11 @@ def load_workflow(global_options, workflow_path, workflow_options_path, executio
             return builder.build(), workflow_options
 
 
-def _load_workflow_options(global_options, path):
+def _load_workflow_options(workflow_path, workflow_options_path, global_options):
     #
+    workflow_path = resolve_absolute_path(workflow_path)
+    workflow_options_path = get_absolute_path(workflow_options_path)
+
     result = {
         'gpipe': {
             'task_name_prefix': '',
@@ -625,13 +628,19 @@ def _load_workflow_options(global_options, path):
 
     if global_options:
         result = merge_dicts(result, global_options)
-    if path:
-        result = merge_dicts(result, load_yaml_from_file(path))
+    if workflow_options_path:
+        result = merge_dicts(result, load_yaml_from_file(workflow_options_path))
 
     if result['gpipe']['work_directory'] is None:
         wd = os.path.abspath(os.getcwd())
         logger.warn('Using current directory as work directory: %(path)s', {'path': wd})
         result['gpipe']['work_directory'] = wd
+
+    #
+    result['gpipe']['workflow'] = workflow_path
+    result['gpipe']['workflow_directory'] = os.path.dirname(workflow_path)
+    result['gpipe']['workflow_options'] = workflow_options_path
+    result['gpipe']['workflow_options_directory'] = os.path.dirname(workflow_options_path)
 
     #
     _add_workflow_option_attribute_resolver(result)
