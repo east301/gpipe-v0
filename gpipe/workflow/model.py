@@ -359,10 +359,13 @@ class Workflow(object):
             make_command.extend(['--assume-old', path])
 
         #
-        make_output = subprocess.check_output(
-            make_command,
-            input=makefile_content.encode('utf-8'),
-            stderr=subprocess.STDOUT)
+        try:
+            make_output = subprocess.check_output(
+                make_command,
+                input=makefile_content.encode('utf-8'),
+                stderr=subprocess.STDOUT)
+        except subprocess.CalledProcessError as exc:
+            raise Exception(f'Execution of make failed: {exc.output}') from exc
 
         incomplete_task_ids = set()
         for line in make_output.decode('utf-8').splitlines():
