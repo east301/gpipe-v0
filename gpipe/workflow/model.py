@@ -601,15 +601,14 @@ script = _new_task_attribute_setter('script')
 
 def load_workflow(global_options, workflow_path, workflow_options_path, execution_count=None):
     #
-    logger.info('Loading workflow:')
-    logger.info('    => workflow file:        %(path)s', {'path': workflow_path})
-    logger.info('    => workflow option file: %(path)s', {'path': workflow_options_path})
-    if execution_count is not None:
-        logger.info('    => execution count:      %(count)s', {'count': execution_count or '(null)'})
-
-    #
     workflow_options = _load_workflow_options(workflow_path, workflow_options_path, global_options)
     execution_count = _get_execution_count(execution_count, workflow_options)
+
+    #
+    logger.info('Loading workflow:')
+    logger.info('    => workflow file:        %(path)s', {'path': workflow_options.gpipe.workflow})
+    logger.info('    => workflow option file: %(path)s', {'path': workflow_options_path})
+    logger.info('    => execution count:      %(count)s', {'count': execution_count or '(null)'})
 
     #
     with pyco_suppressed():
@@ -625,8 +624,9 @@ def _load_workflow_options(workflow_path, workflow_options_path, global_options)
 
     result = {
         'gpipe': {
-            'task_name_prefix': '',
-            'work_directory': None
+            'workflow': None,
+            'work_directory': None,
+            'task_name_prefix': ''
         }
     }
 
@@ -634,6 +634,13 @@ def _load_workflow_options(workflow_path, workflow_options_path, global_options)
         result = merge_dicts(result, global_options)
     if workflow_options_path:
         result = merge_dicts(result, load_yaml_from_file(workflow_options_path))
+
+    if result['gpipe']['workflow'] is None:
+        raise Exception('workflow is not specified')
+    else:
+        if os.path.relpath(result['gpipe']['workflow']):
+            result['gpipe']['workflow'] = join_path(
+                os.path.dirname(workflow_options_path), result['gpipe']['workflow'])
 
     if result['gpipe']['work_directory'] is None:
         wd = os.path.abspath(os.getcwd())
