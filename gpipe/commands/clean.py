@@ -32,11 +32,6 @@ logger = logging.getLogger(__name__)
     help='Delete all files marked as "temporary".'
 )
 @click.argument(
-    'workflow',
-    envvar='GPIPE_WORKFLOW',
-    type=click.Path(exists=True)
-)
-@click.argument(
     'workflow_options',
     envvar='GPIPE_WORKFLOW_OPTIONS',
     type=click.Path(exists=True),
@@ -64,7 +59,6 @@ def main(obj, **kwargs):
     #
     workflow, _ = load_workflow(
         obj.global_options,
-        get_absolute_path(kwargs['workflow']),
         get_absolute_path(kwargs['workflow_options']))
 
     #
