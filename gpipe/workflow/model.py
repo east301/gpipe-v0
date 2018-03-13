@@ -224,8 +224,7 @@ class Task(object):
 
 
 class WorkflowBuilder(object):
-    def __init__(self, workflow_file_path, option_file_path, options, execution_count):
-        self.workflow_file_path = workflow_file_path
+    def __init__(self, option_file_path, options, execution_count):
         self.option_file_path = option_file_path
         self.options = options
         self.execution_count = execution_count
@@ -243,15 +242,15 @@ class WorkflowBuilder(object):
         self.tasks.append(task.render(self.options))
 
     def build(self):
-        return Workflow(self.workflow_file_path, self.option_file_path, self.options, self.tasks)
+        return Workflow(self.option_file_path, self.options, self.tasks)
 
 
 class Workflow(object):
-    def __init__(self, workflow_file_path, option_file_path, options, tasks):
+    def __init__(self, option_file_path, options, tasks):
         self.options = options
         self.tasks = tasks
 
-        self.module_file_directory_path = self._resolve_module_file_directory_path(workflow_file_path)
+        self.module_file_directory_path = self._resolve_module_file_directory_path(options.workflow)
         self.work_directory_path = self._resolve_work_directory(option_file_path, options)
 
         self.file_system_meta_resolver = CachedFileSystemMetaResolver()
@@ -505,8 +504,8 @@ _task_stack = Stack()
 
 
 @contextlib.contextmanager
-def workflow(workflow_path, workflow_option_path, options, execution_count):
-    b = WorkflowBuilder(workflow_path, workflow_option_path, options, execution_count)
+def workflow(workflow_option_path, options, execution_count):
+    b = WorkflowBuilder(workflow_option_path, options, execution_count)
     with _workflow_builder_stack.push_and_pop(b) as builder:
         yield builder
 
@@ -602,9 +601,9 @@ script = _new_task_attribute_setter('script')
 # workflow file manipulation helpers
 # ================================================================================
 
-def load_workflow(global_options, workflow_path, workflow_options_path, execution_count=None):
+def load_workflow(global_options, workflow_options_path, execution_count=None):
     #
-    workflow_options = _load_workflow_options(workflow_path, workflow_options_path, global_options)
+    workflow_options = _load_workflow_options(workflow_options_path, global_options)
     execution_count = _get_execution_count(execution_count, workflow_options)
 
     #
@@ -615,14 +614,13 @@ def load_workflow(global_options, workflow_path, workflow_options_path, executio
 
     #
     with pyco_suppressed():
-        with workflow(workflow_path, workflow_options_path, workflow_options, execution_count) as builder:
-            import_file(workflow_path)
+        with workflow(workflow_options_path, workflow_options, execution_count) as builder:
+            import_file(workflow_options.gpipe.workflow)
             return builder.build(), workflow_options
 
 
-def _load_workflow_options(workflow_path, workflow_options_path, global_options):
+def _load_workflow_options(workflow_options_path, global_options):
     #
-    workflow_path = resolve_absolute_path(workflow_path)
     workflow_options_path = get_absolute_path(workflow_options_path)
 
     result = {
@@ -651,8 +649,7 @@ def _load_workflow_options(workflow_path, workflow_options_path, global_options)
         result['gpipe']['work_directory'] = wd
 
     #
-    result['gpipe']['workflow'] = workflow_path
-    result['gpipe']['workflow_directory'] = os.path.dirname(workflow_path)
+    result['gpipe']['workflow_directory'] = os.path.dirname(result['gpipe']['workflow'])
     result['gpipe']['workflow_options'] = workflow_options_path
     result['gpipe']['workflow_options_directory'] = os.path.dirname(workflow_options_path)
 
