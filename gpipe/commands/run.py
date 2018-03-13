@@ -28,11 +28,6 @@ from ..workflow.model import load_workflow
     help='Run workflow specified by WORKFLOW and WORKFLOW_OPTIONS files.'
 )
 @click.argument(
-    'workflow',
-    envvar='GPIPE_WORKFLOW',
-    type=click.Path(exists=True)
-)
-@click.argument(
     'workflow_options',
     envvar='GPIPE_WORKFLOW_OPTIONS',
     type=click.Path(exists=True),
@@ -66,7 +61,6 @@ from ..workflow.model import load_workflow
 def main(obj, **kwargs):
     workflow, options = load_workflow(
         obj.global_options,
-        get_absolute_path(kwargs['workflow']),
         get_absolute_path(kwargs['workflow_options']),
         execution_count=kwargs['execution_count'])
 
