@@ -250,7 +250,7 @@ class Workflow(object):
         self.options = options
         self.tasks = tasks
 
-        self.module_file_directory_path = self._resolve_module_file_directory_path(options.workflow)
+        self.module_file_directory_path = self._resolve_module_file_directory_path(options.gpipe.workflow)
         self.work_directory_path = self._resolve_work_directory(option_file_path, options)
 
         self.file_system_meta_resolver = CachedFileSystemMetaResolver()
