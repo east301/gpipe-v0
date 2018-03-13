@@ -670,10 +670,11 @@ def _add_workflow_option_attribute_resolver(options):
             return default
 
     def get_or_none(path):
-        return get_or_none(path, None)
+        return get_or_default(path, None)
 
     def contains(path):
         try:
+            get(path)
             return True
         except ValueError:
             return False
