@@ -667,6 +667,7 @@ def _add_workflow_option_attribute_resolver(options):
 
     def contains(path):
         try:
+            get(path)
             return True
         except ValueError:
             return False
