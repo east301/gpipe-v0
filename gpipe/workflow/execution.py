@@ -289,7 +289,7 @@ class SGEWorkflowExecutor(AbstractScriptFileBasedWorkflowExecutor):
             running_tasks = [t for t in tasks if t[-1].endswith('r')]
             if running_tasks:
                 logger.warn('The following tasks are currently running:')
-                for _, id, name in running_tasks:
+                for _, id, name, _ in running_tasks:
                     logger.warn('    * [%(id)s] %(name)s', {'id': id, 'name': name})
 
                 if not force:
@@ -303,5 +303,5 @@ class SGEWorkflowExecutor(AbstractScriptFileBasedWorkflowExecutor):
                     'name': name
                 })
 
-            all_task_ids = [str(id_full) for id_full, id, name, state in tasks]
+            all_task_ids = list(set(str(id) for _, id, _, _ in tasks))
             subprocess.check_output(['qdel'] + all_task_ids)
