@@ -52,6 +52,12 @@ class InputOutputPath(str):
         obj._timestamp_ignored = timestamp_ignored
         return obj
 
+    def __add__(self, tail):
+        return InputOutputPath(
+            self + tail,
+            permanent=self._is_permanent,
+            timestamp_ignored=self._timestamp_ignored)
+
     @property
     def is_permanent(self):
         return self._is_permanent
