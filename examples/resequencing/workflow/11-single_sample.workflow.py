@@ -363,7 +363,7 @@ def get_chrX_PAR_region(id):
 
 
 # ================================================================================
-# autosome
+# autosome (s1x)
 # ================================================================================
 
 for entry in options.sample.fastqs:
@@ -410,7 +410,7 @@ for contig_key, contig_entry in options.reference.contig_dict.items():
     if contig_entry.type != 'AUTOSOME':
         continue
 
-    with task('s05-BASE-gvcf_autosome'):
+    with task('s11-BASE-gvcf_autosome'):
         gatk3_haplotype_caller(
             options.reference.fasta,
             '{{ options.sample.id }}.bwamem.bam',
@@ -419,19 +419,19 @@ for contig_key, contig_entry in options.reference.contig_dict.items():
             2)
 
 
-with task('s06-BASE-gvcf_autosome_concat'):
+with task('s12-BASE-gvcf_autosome_concat'):
     bcftools_concat(
         resolve_outputs('s05-BASE-gvcf_autosome', 'gvcf'),
         '{{ options.sample.id }}.bwamem.hc3.autosome.g.vcf.gz')
 
 
 # ================================================================================
-# PAR2
+# PAR2 (s2x)
 # ================================================================================
 
 if options.sample.sex is not None:
     for name, region, ploidy in get_chrXY_variant_call_regions_PAR2():
-        with task('s11-PAR2-gvcf_chrXY'):
+        with task('s21-PAR2-gvcf_chrXY'):
             gatk3_haplotype_caller(
                 options.reference.fasta,
                 '{{ options.sample.id }}.bwamem.bam',
@@ -439,24 +439,24 @@ if options.sample.sex is not None:
                 region,
                 ploidy)
 
-    with task('s12-PAR2-gvcf_chrXY_concat'):
+    with task('s22-PAR2-gvcf_chrXY_concat'):
         bcftools_concat(
             resolve_outputs('s11-PAR2-gvcf_chrXY', 'gvcf'),
             '{{ options.sample.id }}.bwamem.hc3.chrXY_PAR2.g.vcf.gz')
 
 
 # ================================================================================
-# PAR3
+# PAR3 (s3x, s4x)
 # ================================================================================
 
-with task('s20-PAR3-extract_reads'):
+with task('s31-PAR3-extract_reads'):
     extract_reads_from_bam(
         '{{ options.sample.id }}.bwamem.bam',
         [options.reference.contigs.chrX.id, options.reference.contigs.chrY.id],
         '{{ options.sample.id }}.bwamem.bam.chrXY.interleaved.fastq.gz')
 
 
-with task('s21-PAR3-bwa_mem'):
+with task('s32-PAR3-bwa_mem'):
     bwa_mem(
         options.reference.fasta_PAR3,
         f'{options.sample.id}_chrXY',
@@ -465,24 +465,24 @@ with task('s21-PAR3-bwa_mem'):
         temporary('{{ options.sample.id }}.bwamem.chrXY_PAR3_dup.bam'))
 
 
-with task('s22-PAR3-rmdup'):
+with task('s33-PAR3-rmdup'):
     picard_mark_duplicates(
         ['{{ options.sample.id }}.bwamem.chrXY_PAR3_dup.bam'],
         '{{ options.sample.id }}.bwamem.chrXY_PAR3.bam')
 
 
-with task('s23-PAR3-samtools_bam_metrics'):
+with task('s34-PAR3-samtools_bam_metrics'):
     samtools_bam_metrics('{{ options.sample.id }}.bwamem.chrXY_PAR3.bam')
 
 
-with task('s24-PAR3-picard_bam_metrics'):
+with task('s35-PAR3-picard_bam_metrics'):
     picard_collect_multiple_metrics(
         options.reference.fasta_PAR3,
         '{{ options.sample.id }}.bwamem.chrXY_PAR3.bam')
 
 
 for type in ['chrX', 'chrY']:
-    with task('s24-PAR3-picard_bam_metrics'):
+    with task('s36-PAR3-picard_bam_metrics'):
         picard_collect_wgs_metrics(
             options.reference.fasta_PAR3,
             '{{ options.sample.id }}.bwamem.chrXY_PAR3.bam', type)
@@ -490,7 +490,7 @@ for type in ['chrX', 'chrY']:
 
 if options.sample.sex is not None:
     for name, region, ploidy in get_chrXY_variant_call_regions_PAR3():
-        with task('s25-PAR3-gvcf_chrXY'):
+        with task('s41-PAR3-gvcf_chrXY'):
             gatk3_haplotype_caller(
                 options.reference.fasta_PAR3,
                 '{{ options.sample.id }}.bwamem.bam',
@@ -498,17 +498,17 @@ if options.sample.sex is not None:
                 region,
                 ploidy)
 
-    with task('s26-PAR3-gvcf_chrXY_concat'):
+    with task('s42-PAR3-gvcf_chrXY_concat'):
         bcftools_concat(
             resolve_outputs('s25-PAR3-gvcf_chrXY', 'gvcf'),
             '{{ options.sample.id }}.bwamem.hc3.chrXY_PAR3.g.vcf.gz')
 
 
 # ================================================================================
-# chrMT
+# chrMT (s5x, s6x)
 # ================================================================================
 
-with task('s30-MT-extract_reads'):
+with task('s51-MT-extract_reads'):
     extract_reads_from_bam(
         '{{ options.sample.id }}.bwamem.bam',
         [options.reference.contigs.chrMT.id],
@@ -521,7 +521,7 @@ for reference_fasta in [options.reference.fasta, options.reference.fasta_mt_shif
     deduped_bam = '{{ options.sample.id }}.bwamem.%s.bam' % type
     gvcf = '{{ options.sample.id }}.bwamem.hc3.%s.g.vcf.gz' % type
 
-    with task('s32-MT-bwa_mem'):
+    with task('s52-MT-bwa_mem'):
         bwa_mem(
             reference_fasta,
             f'{options.sample.id}_chrMT',
@@ -530,22 +530,22 @@ for reference_fasta in [options.reference.fasta, options.reference.fasta_mt_shif
             temporary(aligned_bam))
 
 
-    with task('s32-MT-rmdup'):
+    with task('s53-MT-rmdup'):
         picard_mark_duplicates([aligned_bam], deduped_bam)
 
 
-    with task('s33-MT-samtools_bam_metrics'):
+    with task('s54-MT-samtools_bam_metrics'):
         samtools_bam_metrics(deduped_bam)
 
 
-    with task('s34-MT-picard_bam_metrics'):
+    with task('s55-MT-picard_bam_metrics'):
         picard_collect_multiple_metrics(reference_fasta, deduped_bam)
 
 
-    with task('s34-MT-picard_bam_metrics'):
+    with task('s55-MT-picard_bam_metrics'):
         picard_collect_wgs_metrics(reference_fasta, deduped_bam, 'chrMT')
 
 
-    with task('s35-MT-variant_call'):
+    with task('s61-MT-variant_call'):
         gatk3_haplotype_caller(
             reference_fasta, deduped_bam, gvcf, options.reference.contigs.chrMT.id, 1)
