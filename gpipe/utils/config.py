@@ -29,6 +29,9 @@ class GPipeYamlLoader(yaml.Loader):
         with open(path) as fin:
             return yaml.load(fin, GPipeYamlLoader)
 
+    def to_absolute_path(self, node):
+        return os.path.abspath(os.path.join(self._root, self.construct_scalar(node)))
+
 
 def load_yaml_from_stream(stream):
     _register_include_directive()
@@ -42,4 +45,6 @@ def load_yaml_from_file(path):
 
 @once
 def _register_include_directive():
-    GPipeYamlLoader.add_constructor('!include', GPipeYamlLoader.include)
+    directives = ['include', 'to_absolute_path']
+    for key in directives:
+        GPipeYamlLoader.add_constructor(f'!{key}', getattr(GPipeYamlLoader, key))
