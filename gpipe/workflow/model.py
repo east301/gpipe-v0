@@ -28,7 +28,7 @@ from ..utils.config import load_yaml_from_file
 from ..utils.container import Stack, merge_dicts
 from ..utils.log import get_logger
 from ..utils.module import import_file, pyco_suppressed
-from ..utils.path import CachedFileSystemMetaResolver, get_absolute_path, join_path, resolve_absolute_path
+from ..utils.path import CachedFileSystemMetaResolver, get_absolute_path, join_path
 from ..utils.pyobject import ObjectProxy, convert_dict_to_ns, convert_ns_to_dict
 from ..utils.template import render_template_string, undent
 from .execution import generate_execution_id
