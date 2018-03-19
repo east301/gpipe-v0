@@ -1,0 +1,17 @@
+#
+# copyright (c) 2018 east301
+#
+# This software is released under the MIT License.
+# http://opensource.org/licenses/mit-license.php
+#
+# ==========
+# hs37d5.gpipe.yml
+#
+
+gpipe:
+  workflow: ../../../workflow/00-reference.workflow.py
+  work_directory: .
+  task_name_prefix: gpipe-reseq-reference-hs37d5-
+
+
+reference: !include ./hs37d5.reference.yml

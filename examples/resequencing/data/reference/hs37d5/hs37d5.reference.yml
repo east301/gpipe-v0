@@ -1,0 +1,27 @@
+#
+# copyright (c) 2018 east301
+#
+# This software is released under the MIT License.
+# http://opensource.org/licenses/mit-license.php
+#
+# ==========
+# hs37d5.reference.yml
+#
+
+fasta: !to_absolute_path ./hs37d5.fa
+has_chr_prefix: false
+
+chrXY:
+  PARs:
+    - id: PAR1
+      chrX: X:60001-2699520
+      chrY: Y:10001-2649520
+    - id: PAR2
+      chrX: X:154931044-155260560
+      chrY: Y:59034050-59363566
+    - id: XTR
+      chrX: X:88456802-92375509
+      chrY: Y:2917959-6616600
+
+chrMT:
+  shift_size: 10000

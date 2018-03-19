@@ -71,6 +71,12 @@ pip-log.txt
 # Project
 # ================================================================================
 
-examples/resequencing/01-prepare_reference/saccer3/*
-!examples/resequencing/01-prepare_reference/saccer3/prepare_reference.saccer3.yml
-!examples/resequencing/01-prepare_reference/saccer3/run.sh
+examples/resequencing/gpipe-env/
+examples/resequencing/workflow/modulefiles/
+
+examples/resequencing/data/reference/hs37d5/*
+!examples/resequencing/data/reference/hs37d5/hs37d5.gpipe.yml
+!examples/resequencing/data/reference/hs37d5/hs37d5.reference.yml
+
+examples/resequencing/data/sample/HG005/*
+!examples/resequencing/data/sample/HG005/HG005.gpipe.yml

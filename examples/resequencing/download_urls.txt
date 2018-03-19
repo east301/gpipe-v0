@@ -1,0 +1,12 @@
+# reference - hs37d5
+./data/reference/hs37d5/hs37d5.fa.gz    ftp://ftp.1000genomes.ebi.ac.uk/vol1/ftp/technical/reference/phase2_reference_assembly_sequence/hs37d5.fa.gz
+
+# sample FASTQ - HG005
+./data/sample/HG005/5A1_S5_L001_R1_001.fastq.gz     ftp://ftp-trace.ncbi.nih.gov/giab/ftp/data/ChineseTrio/HG005_NA24631_son/HG005_NA24631_son_HiSeq_300x/basespace_250bps_fastqs/150420_HG005_Homogeneity_01-22889870/5A1-25505098/5A1_S5_L001_R1_001.fastq.gz
+./data/sample/HG005/5A1_S5_L001_R2_001.fastq.gz     ftp://ftp-trace.ncbi.nih.gov/giab/ftp/data/ChineseTrio/HG005_NA24631_son/HG005_NA24631_son_HiSeq_300x/basespace_250bps_fastqs/150420_HG005_Homogeneity_01-22889870/5A1-25505098/5A1_S5_L001_R2_001.fastq.gz
+./data/sample/HG005/5A1_S5_L002_R1_001.fastq.gz     ftp://ftp-trace.ncbi.nih.gov/giab/ftp/data/ChineseTrio/HG005_NA24631_son/HG005_NA24631_son_HiSeq_300x/basespace_250bps_fastqs/150420_HG005_Homogeneity_01-22889870/5A1-25505098/5A1_S5_L002_R1_001.fastq.gz
+./data/sample/HG005/5A1_S5_L002_R2_001.fastq.gz     ftp://ftp-trace.ncbi.nih.gov/giab/ftp/data/ChineseTrio/HG005_NA24631_son/HG005_NA24631_son_HiSeq_300x/basespace_250bps_fastqs/150420_HG005_Homogeneity_01-22889870/5A1-25505098/5A1_S5_L002_R2_001.fastq.gz
+./data/sample/HG005/5A2_S6_L001_R1_001.fastq.gz     ftp://ftp-trace.ncbi.nih.gov/giab/ftp/data/ChineseTrio/HG005_NA24631_son/HG005_NA24631_son_HiSeq_300x/basespace_250bps_fastqs/150420_HG005_Homogeneity_01-22889870/5A2-25505099/5A2_S6_L001_R1_001.fastq.gz
+./data/sample/HG005/5A2_S6_L001_R2_001.fastq.gz     ftp://ftp-trace.ncbi.nih.gov/giab/ftp/data/ChineseTrio/HG005_NA24631_son/HG005_NA24631_son_HiSeq_300x/basespace_250bps_fastqs/150420_HG005_Homogeneity_01-22889870/5A2-25505099/5A2_S6_L001_R2_001.fastq.gz
+./data/sample/HG005/5A2_S6_L002_R1_001.fastq.gz     ftp://ftp-trace.ncbi.nih.gov/giab/ftp/data/ChineseTrio/HG005_NA24631_son/HG005_NA24631_son_HiSeq_300x/basespace_250bps_fastqs/150420_HG005_Homogeneity_01-22889870/5A2-25505099/5A2_S6_L002_R1_001.fastq.gz
+./data/sample/HG005/5A2_S6_L002_R2_001.fastq.gz     ftp://ftp-trace.ncbi.nih.gov/giab/ftp/data/ChineseTrio/HG005_NA24631_son/HG005_NA24631_son_HiSeq_300x/basespace_250bps_fastqs/150420_HG005_Homogeneity_01-22889870/5A2-25505099/5A2_S6_L002_R2_001.fastq.gz
