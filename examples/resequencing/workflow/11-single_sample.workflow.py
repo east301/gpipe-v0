@@ -218,6 +218,25 @@ def picard_collect_wgs_metrics(reference_fasta, bam, type):
     """)
 
 
+def qualimap_bamqc(bam):
+    module(common.QUALIMAP_MODULE)
+
+    cpus(4)
+    memory('4GB')
+
+    input('bam',        bam)
+    output('outdir',    f'{bam}.qualimap')
+
+    script(r"""
+        qualimap bamqc\
+            -bam {{ bam }}\
+            --paint-chromosome-limits\
+            -outdir {{ outdir }}\
+            -nt {{ cpus }}\
+            --java-mem-size 12G
+    """)
+
+
 def gatk3_haplotype_caller(reference_fasta, bam, gvcf, region, ploidy):
     module(common.BCFTOOLS_MODULE)
     module(common.GATK3_MODULE)
@@ -406,6 +425,10 @@ for type in ['autosome', 'chrX', 'chrY', 'chrMT']:
             type)
 
 
+with task('s05-BASE-qualimap_metrics'):
+    qualimap_bamqc('{{ options.sample.id }}.bwamem.bam')
+
+
 for contig_key, contig_entry in options.reference.contig_dict.items():
     if contig_entry.type != 'AUTOSOME':
         continue
@@ -488,6 +511,10 @@ for type in ['chrX', 'chrY']:
             '{{ options.sample.id }}.bwamem.chrXY_PAR3.bam', type)
 
 
+with task('s37-PAR3-qualimap_metrics'):
+    qualimap_bamqc('{{ options.sample.id }}.bwamem.chrXY_PAR3.bam')
+
+
 if options.sample.sex is not None:
     for name, region, ploidy in get_chrXY_variant_call_regions_PAR3():
         with task('s41-PAR3-gvcf_chrXY'):
@@ -544,6 +571,10 @@ for reference_fasta in [options.reference.fasta, options.reference.fasta_mt_shif
 
     with task('s55-MT-picard_bam_metrics'):
         picard_collect_wgs_metrics(reference_fasta, deduped_bam, 'chrMT')
+
+
+    with task('s56-MT-qualimap_metrics'):
+        qualimap_bamqc(deduped_bam)
 
 
     with task('s61-MT-variant_call'):

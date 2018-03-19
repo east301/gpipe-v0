@@ -19,6 +19,7 @@ FASTQC_MODULE       = 'fastqc-0.11.2'
 GATK3_MODULE        = 'gatk-3.8-0'
 JAVA_MODULE         = 'java-1.8.0_162'
 PICARD_MODULE       = 'picard-2.10.6'
+QUALIMAP_MODULE     = 'qualimap-2.2.1'
 SAMTOOLS_MODULE     = 'samtools-1.7'
 
 
