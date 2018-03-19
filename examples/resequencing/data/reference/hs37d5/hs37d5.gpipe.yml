@@ -5,12 +5,13 @@
 # http://opensource.org/licenses/mit-license.php
 #
 # ==========
-# prepare_reference.saccer3.yml
+# hs37d5.gpipe.yml
 #
 
 gpipe:
-  task_name_prefix: gpipe-example-prepare_reference-saccer3-
+  workflow: ../../../workflow/00-reference.workflow.py
   work_directory: .
+  task_name_prefix: gpipe-reseq-reference-hs37d5-
 
-prepare_reference:
-  fasta: saccer3.fa
+
+reference: !include ./hs37d5.reference.yml

@@ -1,0 +1,12 @@
+#%Module1.0
+#
+# copyright (c) 2018 east301
+#
+# This software is released under the MIT License.
+# http://opensource.org/licenses/mit-license.php
+#
+
+module-whatis   "GATK 3.8-0"
+
+setenv GATK_JAR     /path/to/GenomeAnalysisTK.jar
+setenv GATK3_JAR    /path/to/GenomeAnalysisTK.jar

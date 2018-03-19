@@ -1,0 +1,34 @@
+#
+# copyright (c) 2018 east301
+#
+# This software is released under the MIT License.
+# http://opensource.org/licenses/mit-license.php
+#
+# ==========
+# HG005.gpipe.yml
+#
+
+gpipe:
+  workflow: ../../../workflow/11-single_sample.workflow.py
+  work_directory: .
+  task_name_prefix: gpipe-reseq-single_sample-HG005-
+
+
+reference: !include ../../reference/hs37d5/hs37d5.reference.yml
+
+sample:
+  id: HG005
+  sex: null
+  fastqs:
+    - id: 5A1_S5_L001
+      r1: 5A1_S5_L001_R1_001.fastq.gz
+      r2: 5A1_S5_L001_R2_001.fastq.gz
+    - id: 5A1_S5_L002
+      r1: 5A1_S5_L002_R1_001.fastq.gz
+      r2: 5A1_S5_L002_R2_001.fastq.gz
+    - id: 5A2_S6_L001
+      r1: 5A2_S6_L001_R1_001.fastq.gz
+      r2: 5A2_S6_L001_R2_001.fastq.gz
+    - id: 5A2_S6_L002
+      r1: 5A2_S6_L002_R1_001.fastq.gz
+      r2: 5A2_S6_L002_R2_001.fastq.gz

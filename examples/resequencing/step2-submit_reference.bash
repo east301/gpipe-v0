@@ -1,3 +1,4 @@
+#!/bin/bash
 #
 # copyright (c) 2018 east301
 #
@@ -5,10 +6,10 @@
 # http://opensource.org/licenses/mit-license.php
 #
 # ==========
-# MANIFEST.in
+# setep2-submit_reference.sh
 #
 
-include LICENSE
-include README.md
+set -eux
+cd $(dirname $0)/data/reference/hs37d5
 
-recursive-include examples *.bash *.md *.py *.txt *.yml
+gpipe run hs37d5.gpipe.yml "$@"

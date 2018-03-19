@@ -11,10 +11,10 @@
 .PHONY: build upload
 
 build:
-	pip install setuptools_scm wheel
+	pip install setuptools_scm
 	rm -rf dist || true
-	python3 setup.py bdist_wheel
+	python3 setup.py sdist
 
 upload:
 	pip install twine
-	twine upload dist/gpipe-*-py3-none-any.whl
+	twine upload dist/gpipe-*.tar.gz
