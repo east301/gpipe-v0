@@ -383,10 +383,10 @@ class Workflow(object):
         temporary_files = []
 
         for node in graph.nodes:
-            if graph.out_degree(node) == 0:
-                terminal_files.append(node)
             if node.is_temporary:
                 temporary_files.append(node)
+            elif graph.out_degree(node) == 0:
+                terminal_files.append(node)
 
         print('.DEFAULT_GOAL: all', file=fout)
         print(f'all: {" ".join(terminal_files)}', file=fout)
