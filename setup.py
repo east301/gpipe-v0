@@ -56,7 +56,7 @@ setup(
         'jsonschema==2.6.0',
         'lxml==4.1.1',
         'networkx==2.1',
-        'python-dotenv==0.7.1'
+        'python-dotenv==0.8.2'
     ],
 
     entry_points="""
