@@ -56,6 +56,7 @@ setup(
         'jsonschema==2.6.0',
         'lxml==4.1.1',
         'networkx==2.1',
+        'pydot==1.2.4',
         'python-dotenv==0.8.2'
     ],
 
@@ -65,6 +66,7 @@ setup(
 
         [gpipe_commands]
         clean = gpipe.commands.clean:main
+        graph = gpipe.commands.graph:main
         run = gpipe.commands.run:main
         cancel = gpipe.commands.cancel:main
         version = gpipe.commands.version:main
